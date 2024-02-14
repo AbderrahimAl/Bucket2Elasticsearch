@@ -1,7 +1,9 @@
 from prefect import flow, task, get_run_logger
 from google.cloud import storage
-from tika import parser
 import os
+os.environ['TIKA_SERVER_JAR'] = 'https://repo1.maven.org/maven2/org/apache/tika/tika-server/1.19/tika-server-1.19.jar'
+
+from tika import parser
 import google.oauth2.credentials
 from prefect.blocks.system import Secret
 
