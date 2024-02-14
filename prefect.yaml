@@ -15,11 +15,12 @@ push:
 # pull section allows you to provide instructions for cloning this project in remote locations
 pull:
 - prefect.deployments.steps.git_clone:
+    id: clone-step
     repository: https://github.com/AbderrahimAl/Bucket2Elasticsearch.git
     branch: main
 - prefect.deployments.steps.pip_install_requirements:
+    directory: "{{ clone-step.directory }}"
     requirements_file: requirements.txt
-    stream_output: False
 
 # the deployments section allows you to provide configuration for deploying flows
 deployments:

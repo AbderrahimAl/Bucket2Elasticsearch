@@ -2,14 +2,18 @@ from prefect import flow, task, get_run_logger
 from google.cloud import storage
 from tika import parser
 import os
-
+import google.oauth2.credentials
+from prefect.blocks.system import Secret
 
 @task(name="read_blob", log_prints=True)
 def read_data(bucket_name: str, file_name: str, logger):
     logger.info(f"bucket_name:  {bucket_name}")
     logger.info(f"file_name: {file_name}")
+
     try: 
-        storage_client = storage.Client()
+        secret_block = Secret.load("gcp-access-token")
+        credentials = google.oauth2.credentials.Credentials(secret_block.get())
+        storage_client = storage.Client(credentials=credentials)
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(file_name)
         with open(file_name, "wb") as file_obj:
@@ -50,6 +54,7 @@ def blob_processor(bucket_name: str, file_name: str):
     
     logger = get_run_logger()
     text = read_data(bucket_name, file_name, logger)
+    logger.info(text)
     if (".xlsx" not in file_name) or text != '':
         chunks = chunk_text(text)
     else: 
@@ -59,12 +64,5 @@ def blob_processor(bucket_name: str, file_name: str):
 
 
 # if __name__ == "__main__":
-#     #main_flow(bucket_name="chatbot-bucket-0", file_name="APSPE Onboarding details (1)-1.docx")
     
-#     blob_processor.from_source(
-#         source="https://github.com/AbderrahimAl/Bucket2Elasticsearch.git", 
-#         entrypoint="src/blob_processor.py:blob_processor"
-#     ).deploy(
-#         name="blob-processor-deployment", 
-#         work_pool_name="managed_service_prefect", 
-#     )
+#     blob_processor.serve(name="deployment-1")
