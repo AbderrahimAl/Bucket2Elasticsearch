@@ -58,7 +58,13 @@ def blob_processor(bucket_name: str, file_name: str):
     return chunks, file_name
 
 
-if __name__ == "__main__":
-    #main_flow(bucket_name="chatbot-bucket-0", file_name="APSPE Onboarding details (1)-1.docx")
+# if __name__ == "__main__":
+#     #main_flow(bucket_name="chatbot-bucket-0", file_name="APSPE Onboarding details (1)-1.docx")
     
-    blob_processor.serve(name="cloud_storage_dep")
+#     blob_processor.from_source(
+#         source="https://github.com/AbderrahimAl/Bucket2Elasticsearch.git", 
+#         entrypoint="src/blob_processor.py:blob_processor"
+#     ).deploy(
+#         name="blob-processor-deployment", 
+#         work_pool_name="managed_service_prefect", 
+#     )
